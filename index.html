@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wyjazd na Madeire</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">1-8 lipca 2026</p>
+        <h1>
+          Wyjazd na Madeire
+          <svg class="flag" viewBox="0 0 60 40" role="img" aria-label="Flaga Portugalii">
+            <rect width="24" height="40" fill="#046a38"></rect>
+            <rect x="24" width="36" height="40" fill="#da291c"></rect>
+            <circle cx="24" cy="20" r="7" fill="#ffcd00"></circle>
+            <circle cx="24" cy="20" r="4.5" fill="#fff"></circle>
+            <path d="M20 17h8v7a4 4 0 0 1-8 0z" fill="#da291c"></path>
+            <path d="M22 18h4v5a2 2 0 0 1-4 0z" fill="#046a38"></path>
+          </svg>
+        </h1>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="calendar-panel" aria-label="Kalendarz wyjazdu">
+        <div class="calendar-toolbar">
+          <div>
+            <h2>Kalendarz</h2>
+            <p>Kliknij wydarzenie, żeby podświetlić miejsce na mapie.</p>
+          </div>
+          <button id="nowButton" type="button">Start</button>
+        </div>
+        <div class="calendar-shell">
+          <div id="calendar" class="calendar"></div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="map-card" aria-label="Mapa Madery">
+          <div class="section-heading">
+            <h2>Mapa Madery</h2>
+            <p>Pinezki podświetlają się po wyborze wydarzenia.</p>
+          </div>
+          <div id="map"></div>
+          <div id="mapFallback" class="map-fallback" hidden>
+            Mapa online nie załadowała się.
+          </div>
+          <div id="placeList" class="place-list"></div>
+        </section>
+
+        <section class="event-details" aria-label="Szczegóły wydarzenia">
+          <div class="section-heading">
+            <h2>Szczegóły</h2>
+            <p id="detailsEmpty">Wybierz wydarzenie w kalendarzu.</p>
+          </div>
+          <div id="detailsContent"></div>
+        </section>
+      </aside>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
