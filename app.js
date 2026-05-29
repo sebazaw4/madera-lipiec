@@ -13,6 +13,8 @@ const places = [
   { id: "calheta", name: "Calheta - baza/dom", emoji: "🏡", drive: "0 min", lat: 32.73548356067803, lng: -17.19408118720518, zoom: 13 },
   { id: "pr6", name: "PR6 Levada das 25 Fontes", emoji: "🥾", drive: "30-35 min", lat: 32.755111, lng: -17.133889, zoom: 14 },
   { id: "pr8", name: "PR8 Ponta de Sao Lourenco", emoji: "🌋", drive: "1 h 10-20 min", lat: 32.743281, lng: -16.701027, zoom: 14 },
+  { id: "pico-ruivo", name: "PR1.2 Pico Ruivo", emoji: "⛰️", drive: "1 h 20-30 min", lat: 32.7656, lng: -16.9424, zoom: 14 },
+  { id: "pico-areeiro", name: "PR1 Pico do Areeiro", emoji: "🌄", drive: "1 h 10-20 min", lat: 32.7356, lng: -16.9287, zoom: 14 },
   { id: "funchal", name: "Funchal", emoji: "📍", drive: "30-35 min", lat: 32.6509, lng: -16.908, zoom: 13 },
 ];
 
@@ -56,6 +58,26 @@ const events = [
     color: "#dc2626",
     placeId: "airport",
     note: "Wylot z Madery o 17:40, przylot do Katowic o 23:30.",
+  },
+  {
+    id: "pico-ruivo",
+    title: "PR1.2 Vereda do Pico Ruivo",
+    date: "2026-07-07",
+    start: "15:00",
+    end: "17:00",
+    color: "#7c3aed",
+    placeId: "pico-ruivo",
+    note: "Rezerwacja: 2026-07-07 15:00.",
+  },
+  {
+    id: "pico-areeiro",
+    title: "PR1 Pico do Areeiro",
+    date: "2026-07-07",
+    start: "19:00",
+    end: "21:00",
+    color: "#f59e0b",
+    placeId: "pico-areeiro",
+    note: "Oryginalnie 17:00; na stronie ustawione około 19:00.",
   },
 ];
 
