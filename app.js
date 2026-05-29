@@ -1,3 +1,53 @@
+const tripDays = Array.from({ length: 8 }, (_, index) => {
+  const day = index + 1;
+  const date = `2026-07-${String(day).padStart(2, "0")}`;
+  return {
+    date,
+    label: `${day}.07`,
+    weekday: new Intl.DateTimeFormat("pl-PL", { weekday: "short" }).format(new Date(`${date}T12:00:00`)),
+  };
+});
+
+const places = [
+  { id: "airport", name: "Lotnisko Madera", emoji: "✈️", drive: "50-55 min", lat: 32.6942, lng: -16.778, zoom: 13 },
+  { id: "calheta", name: "Calheta - baza/dom", emoji: "🏡", drive: "0 min", lat: 32.73548356067803, lng: -17.19408118720518, zoom: 13 },
+  { id: "pr6", name: "PR6 Levada das 25 Fontes", emoji: "🥾", drive: "30-35 min", lat: 32.755111, lng: -17.133889, zoom: 14 },
+  { id: "pr8", name: "PR8 Ponta de Sao Lourenco", emoji: "🌋", drive: "1 h 10-20 min", lat: 32.743281, lng: -16.701027, zoom: 14 },
+  { id: "pico-ruivo", name: "PR1.2 Pico Ruivo", emoji: "⛰️", drive: "1 h 20-30 min", lat: 32.7656, lng: -16.9424, zoom: 14 },
+  { id: "pico-areeiro", name: "PR1 Pico do Areeiro", emoji: "🌄", drive: "1 h 10-20 min", lat: 32.7356, lng: -16.9287, zoom: 14 },
+  { id: "funchal", name: "Funchal", emoji: "📍", drive: "30-35 min", lat: 32.6509, lng: -16.908, zoom: 13 },
+  { id: "fanal", name: "Las Fanal", emoji: "🌲", drive: "45-55 min", lat: 32.8097, lng: -17.1442, zoom: 13 },
+  { id: "seixal-beach", name: "Seixal - czarna plaza", emoji: "🏖️", drive: "50-60 min", lat: 32.8246, lng: -17.1016, zoom: 14 },
+  { id: "seixal-pools", name: "Seixal Piscinas Naturais", emoji: "🌊", drive: "50-60 min", lat: 32.8262, lng: -17.1035, zoom: 14 },
+  { id: "jardim-mar", name: "Jardim do Mar", emoji: "🌅", drive: "10-15 min", lat: 32.7371, lng: -17.2117, zoom: 14 },
+  { id: "paul-mar", name: "Paul do Mar", emoji: "🌊", drive: "15-20 min", lat: 32.7524, lng: -17.2239, zoom: 14 },
+];
+
+const events = [
+  {
+    id: "flight-in",
+    title: "Lot Katowice -> Madeira",
+    date: "2026-07-01",
+    start: "12:50",
+    end: "17:00",
+    color: "#2563eb",
+    placeId: "airport",
+    note: "Przylot na Madere o 17:00.",
+  },
+  {
+    id: "pr6",
+    title: "PR6 Levada das 25 Fontes",
+    date: "2026-07-02",
+    start: "08:30",
+    end: "12:30",
+    color: "#16a34a",
+    placeId: "pr6",
+    note: "Rezerwacja: 2026-07-02 08:30.",
+  },
+  {
+    id: "pr8",
+    title: "PR8 Vereda da Ponta de Sao Lourenco",
+    date: "2026-07-06",
     start: "15:30",
     end: "18:30",
     color: "#ea580c",
@@ -243,8 +293,81 @@ function initMap() {
   renderPlaceList(null);
 }
 
+function loadMapAfterCalendar() {
+  const css = document.createElement("link");
+  css.rel = "stylesheet";
+  css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+  document.head.append(css);
+
+  const script = document.createElement("script");
+  script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+  script.onload = initMap;
+  script.onerror = () => {
+    mapFallback.hidden = false;
+    renderPlaceList(null);
+  };
+  document.body.append(script);
+
+  setTimeout(() => {
+    if (!window.L && !map) {
+      mapFallback.hidden = false;
+      renderPlaceList(null);
+    }
+  }, 3500);
+}
+
 function createPlaceIcon(place, active) {
   return L.divIcon({
     className: `emoji-marker${active ? " active" : ""}`,
     html: `<span>${place.emoji}</span>`,
     iconSize: active ? [42, 42] : [34, 34],
+    iconAnchor: active ? [21, 21] : [17, 17],
+    popupAnchor: [0, -18],
+  });
+}
+
+function focusPlace(placeId) {
+  const place = getPlace(placeId);
+  renderPlaceList(placeId);
+  if (!place || !map) return;
+
+  places.forEach((item) => {
+    markers.get(item.id)?.setIcon(createPlaceIcon(item, item.id === placeId));
+  });
+  map.setView([place.lat, place.lng], place.zoom);
+  markers.get(placeId)?.openPopup();
+}
+
+function selectEvent(eventId) {
+  selectedEventId = eventId;
+  const event = events.find((item) => item.id === eventId);
+  renderCalendar();
+  renderDetails(event);
+  if (event?.placeId) focusPlace(event.placeId);
+}
+
+function renderDetails(event) {
+  detailsContent.innerHTML = "";
+  detailsEmpty.hidden = Boolean(event);
+  if (!event) return;
+
+  const place = getPlace(event.placeId);
+  const card = document.createElement("div");
+  card.className = "details-card";
+  card.innerHTML = `
+    <h3>${escapeHtml(event.title)}</h3>
+    <p><strong>${formatDay(event.date)}</strong>, ${event.start} - ${event.end}</p>
+    <p>${place ? `${place.emoji} ${escapeHtml(place.name)}` : "Bez pinezki"}</p>
+    ${place ? `<p>Dojazd z Calhety: <strong>${place.drive}</strong></p>` : ""}
+    ${event.note ? `<p>${escapeHtml(event.note)}</p>` : ""}
+  `;
+  detailsContent.append(card);
+}
+
+nowButton.addEventListener("click", () => {
+  document.querySelector("[data-date='2026-07-01']")?.scrollIntoView({ block: "nearest", inline: "start" });
+});
+
+renderCalendar();
+renderDetails(null);
+loadMapAfterCalendar();
